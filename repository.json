@@ -1,8 +1,6 @@
 {
   "name": "Lumen Installer Repo",
   "url": "https://github.com/Straajt/lumen_installer",
-  "maintainer": "Lumen",
-  "addons": [
-    "lumen_installer"
-  ]
+  "maintainer": "David Smart",
+  "addons": ["lumen_installer"]
 }
