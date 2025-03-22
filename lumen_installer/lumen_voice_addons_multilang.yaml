@@ -1,0 +1,88 @@
+
+# =========================
+# 🌍 Lumen Voice Addons – Multilingual Edition (SK/EN)
+# =========================
+
+# Lokale Intents (EN/SK)
+intent_script:
+  LichtGemütlich:
+    action:
+      - service: scene.turn_on
+        target:
+          entity_id: scene.wohnzimmer_gemutlich
+      - service: tts.cloud_say
+        data:
+          entity_id: media_player.arc
+          message: >
+            Lichter angepasst. Zeit für Entspannung, Boss.
+
+  StatusFragen:
+    action:
+      - service: tts.cloud_say
+        data:
+          entity_id: media_player.arc
+          message: >
+            Alles läuft wie geschmiert, David. Robko ruht, das Netzwerk steht, und deine Wohnung ist unter Kontrolle.
+
+intents:
+  - name: LichtGemütlich
+    language: en
+    sentences:
+      - make it cozy
+      - activate chill mode
+      - lumen, relax lights
+  - name: LichtGemütlich
+    language: sk
+    sentences:
+      - zapni príjemné osvetlenie
+      - chcem náladové svetlo
+      - lumen, večerné svetlo
+  - name: StatusFragen
+    language: en
+    sentences:
+      - what's the status
+      - is everything okay
+      - how are things at home
+  - name: StatusFragen
+    language: sk
+    sentences:
+      - lumen, aký je stav
+      - je doma všetko ok
+      - čo nové lumen
+
+# 🖼️ Lovelace Test-Buttons
+lovelace:
+  views:
+    - title: Lumen Voice Test
+      path: lumen_voice
+      cards:
+        - type: button
+          name: Gemütliches Licht
+          icon: mdi:sofa
+          tap_action:
+            action: call-service
+            service: intent.handle
+            service_data:
+              name: LichtGemütlich
+              text: zapni príjemné osvetlenie
+        - type: button
+          name: Status-Check
+          icon: mdi:robot
+          tap_action:
+            action: call-service
+            service: intent.handle
+            service_data:
+              name: StatusFragen
+              text: lumen, aký je stav
+
+# ✨ Sprachassistent Pipelines – als Hinweis
+# In der GUI anlegen unter: Einstellungen → Sprachassistent → Pipelines
+# Beispiel:
+# - Name: slovak_pipeline
+#   Sprache: sk-SK
+#   STT: Whisper
+#   TTS: piper (sk-SK/jana)
+# - Name: english_pipeline
+#   Sprache: en-US
+#   STT: Whisper
+#   TTS: amazon_polly (Joey)

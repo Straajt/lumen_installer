@@ -1,0 +1,8 @@
+{
+  "name": "Lumen Installer Repo",
+  "url": "https://github.com/yourusername/lumen_installer_repo",
+  "maintainer": "Lumen",
+  "addons": [
+    "lumen_installer"
+  ]
+}

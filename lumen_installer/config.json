@@ -1,0 +1,1 @@
+{"name": "Lumen Installer", "version": "1.0.0", "slug": "lumen_installer", "description": "Installiert das komplette Lumen Voice Assistant Setup", "startup": "once", "boot": "manual", "arch": ["aarch64", "armv7", "amd64"], "ingress": False, "host_network": False, "options": {}, "schema": {}, "init": False, "privileged": [], "map": ["config:rw"], "image": "local/lumen_installer"}

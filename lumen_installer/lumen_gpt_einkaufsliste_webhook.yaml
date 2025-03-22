@@ -1,0 +1,72 @@
+
+# 🔁 REST-Command zur Übergabe von Produktlisten an GPT
+rest_command:
+  lumen_einkauf_parse:
+    url: "https://api.openai.com/v1/chat/completions"
+    method: POST
+    headers:
+      Authorization: "Bearer YOUR_API_KEY"
+      Content-Type: "application/json"
+    payload: >
+      {
+        "model": "gpt-4",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Extrahiere aus folgendem Text eine saubere, durch Kommata getrennte Liste an Einkaufsprodukten."
+          },
+          {
+            "role": "user",
+            "content": "{{ einkaufs_text }}"
+          }
+        ]
+      }
+
+# 🔧 Automatisierung: Sprachtext an GPT senden + Shopping List + Shortcut-Webhook
+script:
+  lumen_add_shopping_items:
+    alias: "Lumen fügt Einkaufsprodukte hinzu"
+    fields:
+      einkaufs_text:
+        description: "Sprachinput mit Produkten"
+        example: "Bitte füge Hafermilch, Käse und Pasta zur Einkaufsliste hinzu"
+    sequence:
+      - variables:
+          api_key: !secret openai_api_key
+      - service: rest_command.lumen_einkauf_parse
+        data:
+          einkaufs_text: "{{ einkaufs_text }}"
+        response_variable: gpt_response
+
+      - variables:
+          produktliste: >
+            {{ gpt_response['choices'][0]['message']['content'].split(',') | map('trim') | list }}
+
+      - repeat:
+          for_each: "{{ produktliste }}"
+          sequence:
+            - service: shopping_list.add_item
+              data:
+                name: "{{ repeat.item }}"
+            - service: notify.mobile_app_iphone_von_david
+              data:
+                message: "🛒 {{ repeat.item }} bol pridaný do nákupného zoznamu."
+
+      - service: notify.mobile_app_iphone_uzivatela_michaela
+        data:
+          message: "🛒 Aktualizovaný nákupný zoznam. Otvor poznámku pre zdieľaný zoznam."
+      - service: rest_command.send_to_icloud_shortcut
+        data:
+          items: "{{ produktliste | join(', ') }}"
+
+# Webhook-Aufruf für Apple Shortcut
+rest_command:
+  send_to_icloud_shortcut:
+    url: "https://www.icloud.com/shortcuts/DEIN_SHORTCUT_WEBHOOK"
+    method: POST
+    headers:
+      Content-Type: "application/json"
+    payload: >
+      {
+        "text": "{{ items }}"
+      }
